@@ -1,7 +1,7 @@
 const { default: W3GReplay } = require("w3gjs");
 const fs = require("fs");
 const parser = new W3GReplay();
-const path = (".");    // set this to your w3g file path
+const path = ("C:/Users/steve/Documents/Warcraft III/BattleNet/1338795/Replays");    // set this to your w3g file path
 parser
   .parse(path + "/LastReplay.w3g")
   .then((result) => {
@@ -35,7 +35,10 @@ parser
     console.log(full_string)
 
     // rename LastReplay.w3g to full_string.w3g
-    fs.rename("./LastReplay.w3g", "./" + full_string + ".w3g", function(err) {
+    fs.rename(
+        path + "/LastReplay.w3g",
+        path + "/Renamed/" + full_string + ".w3g",
+        function(err) {
         if (err) {
             console.log(err);
         } else {
