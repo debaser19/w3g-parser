@@ -1,10 +1,25 @@
 const { default: W3GReplay } = require("w3gjs");
 const fs = require("fs");
 const parser = new W3GReplay();
-const path = ("C:/Users/steve/Documents/Warcraft III/BattleNet/1338795/Replays");    // set this to your w3g file path
-parser
-  .parse(path + "/LastReplay.w3g")
-  .then((result) => {
+const currentPath = ("C:/Users/steve/Documents/Warcraft III/BattleNet/1338795/Replays/Autosaved/Multiplayer/");    // set this to your w3g file path
+const newPath = ("C:/Users/steve/Documents/Warcraft III/BattleNet/1338795/Replays/Autosaved/Renamed/");    // set this to your w3g file path
+
+// get list of all filenames in the directory and store in an array
+const files = fs.readdirSync(currentPath);
+
+// get first file in the directory
+const file = files[0];
+const birthtime = fs.statSync(currentPath + file).birthtime.toISOString();
+console.log(birthtime);
+const createdDate = fs.statSync(currentPath + file).birthtime.toISOString().
+    replace(/T/, "_").
+    replaceAll("-", "_").
+    replaceAll(":", "_").
+    replace(/\..+/, '');
+console.log(createdDate);
+
+(async () => {
+    const result = await parser.parse(currentPath + file);
     var team_0 = [];
     var team_1 = [];
     for (let p = 0; p < result.players.length; p++) {
@@ -31,13 +46,11 @@ parser
         }
     }
 
-    var full_string = team_0_string + "_VS_" + team_1_string;
+    var full_string = "[" + createdDate + "]" + team_0_string + "_VS_" + team_1_string;
     console.log(full_string)
-
-    // rename LastReplay.w3g to full_string.w3g
     fs.rename(
-        path + "/LastReplay.w3g",
-        path + "/Renamed/" + full_string + ".w3g",
+        currentPath + file,
+        newPath + full_string + ".w3g",
         function(err) {
         if (err) {
             console.log(err);
@@ -45,5 +58,5 @@ parser
             console.log("Replay renamed to " + full_string + ".w3g");
         }
     });
-  })
-  .catch(console.error);
+})().catch(console.error);
+
